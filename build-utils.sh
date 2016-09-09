@@ -48,7 +48,7 @@ alias configure-mans='$SSSD_SOURCE/configure \
                          --infodir=/usr/share/info \
                          --enable-nsslibdir=/$LIB \
                          --enable-pammoddir=/$LIB/security \
-                         --with-test-dir=/dev/shm/sssd-tests \
+                         --with-test-dir=$SSSD_TEST_DIR \
                          --enable-silent-rules \
                          --enable-all-experimental-features'
 
