@@ -28,6 +28,10 @@ alias make-only-errors='make 1> /dev/null'
 
 # Configure SSSD
 
+if [ ! -d $SSSD_TEST_DIR ]; then
+    mkdir $SSSD_TEST_DIR
+fi
+
 alias configure-mans='$SSSD_SOURCE/configure \
                          --build=$ARCH-unknown-linux-gnu \
                          --host=$ARCH-unknown-linux-gnu \
@@ -56,7 +60,7 @@ alias configure='configure-mans --without-manpages'
 
 # Build SSSD
 
-alias cd-sssd-build='mkdir $SSSD_BUILD &> /dev/null && cd $SSSD_BUILD'
+alias cd-sssd-build='mkdir $SSSD_BUILD &> /dev/null ; cd $SSSD_BUILD'
 alias cd-sssd-source='cd $SSSD_SOURCE'
 
 alias sssd-install='sudo make install && sudo rm -f $LIBDIR/ldb/modules/ldb/memberof.la'
