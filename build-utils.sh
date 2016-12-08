@@ -1,13 +1,14 @@
 #!/bin/bash
 
+_SSSSCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 export PO4A="po4a"
 
 # Architecture
 
-ARCH=$(uname -p)
-LIB=$(rpm --eval %{_lib})
-LIBDIR=$(rpm --eval %{_libdir})
-NCPU=$(/usr/bin/getconf _NPROCESSORS_ONLN)
+LIB=`rpm --eval %{_lib}`
+LIBDIR=`rpm --eval %{_libdir}`
+NCPU=`/usr/bin/getconf _NPROCESSORS_ONLN`
 
 # Build options
 
@@ -32,29 +33,28 @@ if [ ! -d $SSSD_TEST_DIR ]; then
     mkdir $SSSD_TEST_DIR
 fi
 
-alias configure-mans='$SSSD_SOURCE/configure \
-                         --build=$ARCH-unknown-linux-gnu \
-                         --host=$ARCH-unknown-linux-gnu \
-                         --target=$ARCH-redhat-linux-gnu \
+RPM_FLAGS=""
+for flag in $(< "$_SSSSCRIPTDIR/rpms_flags"); do
+    RPM_FLAGS+=" --$flag=`rpm --eval %{_$flag}`"
+done
+
+# Additional flags for RHEL
+if [ `rpm --eval 0%{?rhel}` -ne 0 ] ; then
+    RPM_FLAGS+=" --without-python3-bindings"
+    RPM_FLAGS+=" --with-ad-gpo-default=permissive"
+    RPM_FLAGS+=" --without-secrets"
+fi
+
+alias configure-mans="$SSSD_SOURCE/configure $RPM_FLAGS \
                          --program-prefix= \
-                         --prefix=/usr \
-                         --exec-prefix=/usr \
-                         --bindir=/usr/bin \
-                         --sbindir=/usr/sbin \
-                         --sysconfdir=/etc \
-                         --datadir=/usr/share \
-                         --includedir=/usr/include \
-                         --libdir=$LIBDIR \
-                         --libexecdir=/usr/libexec \
-                         --localstatedir=/var \
-                         --sharedstatedir=/var/lib \
-                         --mandir=/usr/share/man \
-                         --infodir=/usr/share/info \
-                         --enable-nsslibdir=/$LIB \
-                         --enable-pammoddir=/$LIB/security \
+                         --exec-prefix=`rpm --eval %{_prefix}` \
                          --with-test-dir=$SSSD_TEST_DIR \
+                         --with-sssd-user=$SSSD_USER \
+                         --enable-nsslibdir=$LIBDIR \
+                         --enable-pammoddir=$LIBDIR/security \
+                         --enable-nfsidmaplibdir=$LIBDIR/libnfsidmap \
                          --enable-silent-rules \
-                         --enable-all-experimental-features'
+                         --enable-all-experimental-features"
 
 alias configure='configure-mans --without-manpages'
 
@@ -98,3 +98,17 @@ test-build() {
     fi
 }
 
+run-integration-test() {
+    if should-print-help $@
+    then 
+        echo "Run specific integration test"
+        echo "Make sure 'make intgcheck' has been run before this call!"  
+        echo "Usage:"
+        echo "$0 TEST-NAME" 
+        echo ""
+        return 0
+    fi
+    
+    cd-sssd-build
+    INTGCHECK_PYTEST_ARGS="-k$1" make -C intg/bld/src/tests/intg/ intgcheck-installed
+}

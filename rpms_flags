@@ -1,0 +1,15 @@
+build
+host
+target
+prefix
+bindir
+sbindir
+sysconfdir
+datadir
+includedir
+libdir
+libexecdir
+localstatedir
+sharedstatedir
+mandir
+infodir
