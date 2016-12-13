@@ -116,3 +116,50 @@ sss-run() {
     sssd -i -d 0x3ff0 ${1-}
 }
 
+sss-talloc-report() {
+    if should-print-help $@
+    then 
+        echo "Generate a talloc report from SSSD binary." 
+        echo "Usage:"
+        echo "$0 SSSD-PROCESS [FILENAME/tmp/sssd.talloc/@process.@timestamp]" 
+        echo ""
+        return 0
+    fi
+    
+    local TIME=`date +"%s"`
+    local PROGRAM=$1
+    local FILE=$2
+    local DIR="/tmp/sssd.talloc"
+    local PROCESS=""
+    
+    if [ -z "$FILE" ]
+    then
+        mkdir -p $DIR
+        FILE="$DIR/$PROGRAM.$TIME"
+    fi
+    
+    pgrep $PROGRAM &> /dev/null
+    if [ $? -eq 0 ];
+    then
+        PROCESS=`pgrep $PROGRAM | head -n 1`
+    else
+        echo "No such process."
+        return 1
+    fi
+    
+    echo "Attaching GDB to $PROGRAM with PID $PROCESS"
+        
+    sudo gdb -quiet -batch -p $PROCESS \
+        -ex "set \$file = (FILE*)fopen(\"$FILE\", \"w+\")" \
+        -ex 'call talloc_enable_null_tracking()' \
+        -ex 'call talloc_report_full(0, $file)' \
+        -ex 'detach' \
+        -ex 'quit' &> /dev/null
+        
+    if [ $? -eq 0 ];
+    then
+        echo "Talloc report generated to: $FILE"
+    else
+        echo "Unable to generate talloc report."
+    fi
+}

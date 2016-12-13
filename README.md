@@ -94,6 +94,16 @@ To force push current branch to all repositories in `$GIT_PUSH_REPOSITORIES`:
 $ mygit-push
 ```
 
+## Tips ##
+
+### Generate a talloc report of an SSSD proccess ###
+
+```bash
+$ sss-talloc-report sssd_nss
+Attaching GDB to sssd_nss with PID 23369
+Talloc report generated to: /tmp/sssd.talloc/sssd_nss.1481631737
+```
+
 ### InfoPipe commands ###
 
 ```bash
