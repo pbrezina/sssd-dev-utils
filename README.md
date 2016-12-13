@@ -16,6 +16,7 @@ export SSSD_SOURCE=$HOME/workspace/sssd
 export SSSD_BUILD=/dev/shm/sssd
 export SSSD_TEST_BUILD=/dev/shm/sssd-tests
 export SSSD_USER=sssd
+export SSSD_RHEL_PACKAGE=$HOME/packages/rhel/sssd
 export CFLAGS_CUSTOM=""
 
 export GIT_PATCH_LOCATION="$HOME/Downloads"

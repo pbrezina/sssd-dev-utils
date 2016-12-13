@@ -37,7 +37,7 @@ mygit-mv-patch() {
     then 
         echo "Move and reindex git patch" 
     	echo "Usage:"
-    	echo "$0 PATCH NEWINDEX [DIR=$HOME/packages/rhel/sssd]" 
+    	echo "$0 PATCH NEWINDEX [DIR=$SSSD_RHEL_PACKAGE]" 
     	echo ""
         return 0
     fi
@@ -59,13 +59,13 @@ mygit-mv-patches() {
     then 
         echo "Move all git patches in current directory" 
     	echo "Usage:"
-    	echo "$0 START-INDEX [DIR=$HOME/packages/rhel/sssd]" 
+    	echo "$0 START-INDEX [DIR=$SSSD_RHEL_PACKAGE]" 
     	echo ""
         return 0
     fi
     
     local INDEX=$((10#$1))
-    local DIR=${2-$HOME/packages/rhel/sssd}
+    local DIR=${2-$SSSD_RHEL_PACKAGE}
 
     for PATCH in *.patch
     do
