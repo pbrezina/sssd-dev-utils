@@ -12,7 +12,7 @@ ifp-send() {
     	echo "$0 OBJECT-PATH METHOD ARGUMENTS" 
     	echo ""
     	echo "InfoPipe prefix for object path and method may be skipped."
-    	echo "Example: ifp-send Users/10001 Users.User.FindByName string:John"
+    	echo "Example: ifp-send Users Users.FindByName string:John"
         return 0
     fi
     
@@ -66,4 +66,20 @@ ifp-get-all() {
     local IFACE=$2
 
     ifp-send $OBJECT org.freedesktop.DBus.Properties.GetAll string:$IFACE
+}
+
+ifp-introspect() {
+    if should-print-help $@
+    then 
+        echo "Send an InfoPipe DBus.Introspectable.Introspect request" 
+        echo "Usage:"
+        echo "$0 OBJECT-PATH" 
+        echo ""
+        echo "Example: ifp-introspect /org/freedesktop/sssd/infopipe"
+        return 0
+    fi
+    
+    local OBJECT=$1
+
+    ifp-send $OBJECT org.freedesktop.DBus.Introspectable.Introspect
 }

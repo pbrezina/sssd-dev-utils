@@ -108,7 +108,8 @@ Talloc report generated to: /tmp/sssd.talloc/sssd_nss.1481631737
 ### InfoPipe commands ###
 
 ```bash
-$ ifp-send Users/10001 Users.User.FindByName string:John
+$ ifp-send Users Users.FindByName string:John
 $ ifp-get Users/10001 org.freedekstop.sssd.Users.User name
 $ ifp-get-all Users/10001 org.freedekstop.sssd.Users.User
+$ ifp-introspect /org/freedesktop/sssd/infopipe
 ```
