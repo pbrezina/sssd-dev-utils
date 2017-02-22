@@ -70,7 +70,7 @@ mygit-mv-patches() {
     for PATCH in *.patch
     do
         printf -v PREFIX '%04d' $INDEX
-        mv-patch $PATCH $PREFIX $DIR
+        mygit-mv-patch $PATCH $PREFIX $DIR
         ((INDEX++))
     done
 }
