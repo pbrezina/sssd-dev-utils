@@ -108,7 +108,7 @@ sss-brew-scratch-build() {
     local SRPM=$(rhpkg srpm 2> /dev/null | tail -n 2 | sed 's/^Wrote: //')
     local RHEL=${1-$BRANCH}
 
-    rhpkg --dist $RHEL scratch-build --srpm $SRPM
+    rhpkg --release $RHEL scratch-build --srpm $SRPM
 }
 
 sss-run() {
