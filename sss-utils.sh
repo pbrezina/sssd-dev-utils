@@ -112,6 +112,15 @@ sss-brew-scratch-build() {
 }
 
 sss-run() {
+    if should-print-help-allow-empty $@
+    then 
+        echo "Run SSSD in interactive mode with debug level 0x3ff0" 
+    	echo "Usage:"
+    	echo "$0 ADDITIONAL-SSSD-ARGS" 
+    	echo ""
+        return 0
+    fi
+	
     rm -f /var/lib/sss/db/* /var/log/sssd/*
     sssd -i -d 0x3ff0 ${1-}
 }
