@@ -116,6 +116,19 @@ sss-run() {
     sssd -i -d 0x3ff0 ${1-}
 }
 
+sss-run-ci() {
+    if should-print-help-allow-empty $@
+    then 
+        echo "Run SSSD Continuous Integration test on current branch" 
+    	echo "Usage:"
+    	echo "$0" 
+    	echo ""
+        return 0
+    fi
+	
+	git push ci HEAD:master
+}
+
 sss-talloc-report() {
     if should-print-help $@
     then 
