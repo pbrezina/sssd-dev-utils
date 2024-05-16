@@ -12,13 +12,14 @@ NCPU=`/usr/bin/getconf _NPROCESSORS_ONLN`
 
 # Build options
 
-CFLAGS_COMMON="-m64 -mtune=generic -fstack-protector-all -Wall -Wextra -Wno-sign-compare -Wshadow -Wunused-variable -Wno-unused-parameter -Wno-error=cpp $CFLAGS_CUSTOM"
+CFLAGS_COMMON="-m64 -mtune=generic -fstack-protector-all -Wall -Wextra -Wno-sign-compare -Wshadow -Wunused-variable -Wno-unused-parameter -Wno-error=cpp -Wno-error=deprecated-declarations $CFLAGS_CUSTOM"
 
 alias cflags_warning='    CFLAGS="$CFLAGS_COMMON -O0 -ggdb3 -Wp,-U_FORTIFY_SOURCE"'
 alias cflags_devel='      CFLAGS="$CFLAGS_COMMON -O0 -ggdb3 -Werror -Wp,-U_FORTIFY_SOURCE"'
 alias cflags_early_devel='CFLAGS="$CFLAGS_COMMON -O0 -ggdb3 -Werror -Wno-unused-but-set-variable -Wp,-U_FORTIFY_SOURCE"'
 alias cflags_optimize='   CFLAGS="$CFLAGS_COMMON -O3"'
 
+shopt -s expand_aliases
 cflags_devel
 export CFLAGS
 
@@ -50,6 +51,7 @@ alias configure-mans="$SSSD_SOURCE/configure $RPM_FLAGS \
                          --exec-prefix=`rpm --eval %{_prefix}` \
                          --with-test-dir=$SSSD_TEST_DIR \
                          --with-sssd-user=$SSSD_USER \
+                         --with-initscript=systemd \
                          --enable-nsslibdir=$LIBDIR \
                          --enable-pammoddir=$LIBDIR/security \
                          --enable-nfsidmaplibdir=$LIBDIR/libnfsidmap \
@@ -100,15 +102,15 @@ test-build() {
 
 run-integration-test() {
     if should-print-help $@
-    then 
+    then
         echo "Run specific integration test"
-        echo "Make sure 'make intgcheck' has been run before this call!"  
+        echo "Make sure 'make intgcheck' has been run before this call!"
         echo "Usage:"
-        echo "$0 TEST-NAME" 
+        echo "$0 TEST-NAME"
         echo ""
         return 0
     fi
-    
+
     cd-sssd-build
-    INTGCHECK_PYTEST_ARGS="-k$1" make -C intg/bld/src/tests/intg/ intgcheck-installed
+    INTGCHECK_PYTEST_ARGS="-s -k$1" make -C intg/bld/src/tests/intg/ intgcheck-installed
 }
